@@ -8,7 +8,7 @@ interface ThemeContextValue {
   toggleTheme: () => void;
 }
 
-const STORAGE_KEY = 'purple-cursos:theme';
+const STORAGE_KEY = 'vetensino:theme';
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 

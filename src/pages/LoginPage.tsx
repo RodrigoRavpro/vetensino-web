@@ -52,7 +52,7 @@ export const LoginPage = () => {
   const selectLocalDevUser = (user: LocalDevUser) => {
     if (!import.meta.env.DEV) return;
     setEmail(user.email);
-    setPassword('PurpleVet@Dev2026');
+    setPassword('VetEnsino@Dev2026');
     setMessage('Credenciais locais preenchidas. Clique em Entrar.');
   };
 

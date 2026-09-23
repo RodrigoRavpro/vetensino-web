@@ -1,5 +1,5 @@
 /**
- * Tokens do VetEnsino: layout inspirado na Alura sobre a paleta PurpleVet.
+ * Tokens visuais do VetEnsino.
  * O tema escuro é o padrão; o claro é alternado via atributo `data-theme` no html.
  */
 

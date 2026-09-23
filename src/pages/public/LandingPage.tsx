@@ -14,45 +14,45 @@ const PublicHeader = () => (
   <>
     <style>{`
       @media (max-width: 900px) {
-        .purple-cursos-header {
+        .vetensino-header {
           padding: 10px 14px !important;
         }
 
-        .purple-cursos-header-inner {
+        .vetensino-header-inner {
           gap: 12px !important;
           padding: 0 !important;
         }
 
-        .purple-cursos-header-brand {
+        .vetensino-header-brand {
           gap: 8px !important;
         }
 
-        .purple-cursos-header-logo {
+        .vetensino-header-logo {
           width: 28px !important;
           height: 28px !important;
           font-size: 0.9rem !important;
         }
 
-        .purple-cursos-header-brand-text {
+        .vetensino-header-brand-text {
           display: none !important;
         }
 
-        .purple-cursos-header-nav {
+        .vetensino-header-nav {
           display: none !important;
         }
 
-        .purple-cursos-header-login {
+        .vetensino-header-login {
           display: none !important;
         }
 
-        .purple-cursos-header-menu {
+        .vetensino-header-menu {
           display: inline-flex !important;
         }
       }
     `}</style>
 
     <header
-      className="purple-cursos-header"
+      className="vetensino-header"
       style={{
         position: 'sticky',
         top: 0,
@@ -63,7 +63,7 @@ const PublicHeader = () => (
       }}
     >
       <div
-        className="purple-cursos-header-inner"
+        className="vetensino-header-inner"
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -74,12 +74,12 @@ const PublicHeader = () => (
           padding: '12px 18px',
         }}
       >
-        <div className="purple-cursos-header-brand" style={{ display: 'flex', alignItems: 'center', gap: spacing.sm }}>
+        <div className="vetensino-header-brand" style={{ display: 'flex', alignItems: 'center', gap: spacing.sm }}>
           <BrandLogo size="sm" compact />
         </div>
 
         <nav
-          className="purple-cursos-header-nav"
+          className="vetensino-header-nav"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -104,7 +104,7 @@ const PublicHeader = () => (
 
         <div style={{ display: 'flex', alignItems: 'center', gap: spacing.sm }}>
           <a
-            className="purple-cursos-header-login"
+            className="vetensino-header-login"
             href="/login"
             style={{
               textDecoration: 'none',
@@ -124,7 +124,7 @@ const PublicHeader = () => (
           </a>
 
           <button
-            className="purple-cursos-header-menu"
+            className="vetensino-header-menu"
             type="button"
             aria-label="Abrir menu"
             style={{
@@ -185,12 +185,12 @@ const PublicHeader = () => (
 const PublicHero = () => (
   <>
     <style>{`
-      .purple-cursos-hero {
+      .vetensino-hero {
         aspect-ratio: 16 / 7.8;
       }
 
       @media (max-width: 900px) {
-        .purple-cursos-hero {
+        .vetensino-hero {
           aspect-ratio: 1 / 1.08 !important;
           min-height: 0 !important;
           background-image: url('${bannerMobile}') !important;
@@ -198,32 +198,32 @@ const PublicHero = () => (
           background-position: center center !important;
         }
 
-        .purple-cursos-hero-inner {
+        .vetensino-hero-inner {
           grid-template-columns: 1fr !important;
           padding: 22px 18px 26px !important;
           min-height: 0 !important;
         }
 
-        .purple-cursos-hero-copy {
+        .vetensino-hero-copy {
           max-width: 100% !important;
           gap: 14px !important;
         }
 
-        .purple-cursos-hero-title {
+        .vetensino-hero-title {
           max-width: 100% !important;
           font-size: clamp(2.5rem, 9vw, 3.8rem) !important;
         }
 
-        .purple-cursos-hero-text {
+        .vetensino-hero-text {
           max-width: 100% !important;
           font-size: 1rem !important;
         }
 
-        .purple-cursos-hero-actions {
+        .vetensino-hero-actions {
           width: 100% !important;
         }
 
-        .purple-cursos-hero-actions a {
+        .vetensino-hero-actions a {
           flex: 1 1 100% !important;
           width: 100% !important;
         }
@@ -231,7 +231,7 @@ const PublicHero = () => (
     `}</style>
 
     <section
-      className="purple-cursos-hero"
+      className="vetensino-hero"
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -257,7 +257,7 @@ const PublicHero = () => (
     />
 
     <div
-      className="purple-cursos-hero-inner"
+      className="vetensino-hero-inner"
       style={{
         position: 'relative',
         maxWidth: '1280px',
@@ -272,9 +272,9 @@ const PublicHero = () => (
       }}
     >
       <div style={{ display: 'grid', gap: spacing.lg, position: 'relative', zIndex: 2, padding: '20px 0 18px' }}>
-        <div className="purple-cursos-hero-copy" style={{ display: 'grid', gap: spacing.sm, maxWidth: '620px' }}>
+        <div className="vetensino-hero-copy" style={{ display: 'grid', gap: spacing.sm, maxWidth: '620px' }}>
           <h1
-            className="purple-cursos-hero-title"
+            className="vetensino-hero-title"
             style={{
               margin: 0,
               fontSize: 'clamp(2.6rem, 4.4vw, 5.6rem)',
@@ -289,7 +289,7 @@ const PublicHero = () => (
           </h1>
 
           <p
-            className="purple-cursos-hero-text"
+            className="vetensino-hero-text"
             style={{
               margin: 0,
               color: 'rgba(32, 22, 47, 0.82)',
@@ -302,7 +302,7 @@ const PublicHero = () => (
           </p>
         </div>
 
-        <div className="purple-cursos-hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.sm, maxWidth: '620px' }}>
+        <div className="vetensino-hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.sm, maxWidth: '620px' }}>
           <a
             href="#treinamentos"
             style={{
