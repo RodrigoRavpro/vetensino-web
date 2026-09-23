@@ -1,0 +1,216 @@
+:root {
+  --brand-primary: #8854c0;
+  --brand-dark: #6b3fa0;
+  --brand-light: #a97fd9;
+  --brand-subtle: rgba(136, 84, 192, 0.12);
+
+  --bg-base: #0f0d14;
+  --bg-surface: #1a1721;
+  --bg-elevated: #241f2e;
+
+  --border-subtle: #2e2839;
+  --border-strong: #413951;
+
+  --text-primary: #f5f3f7;
+  --text-secondary: #b8b2c4;
+  --text-muted: #7c7589;
+
+  --state-success: #3fb950;
+  --state-warning: #d29922;
+  --state-danger: #f85149;
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg-base: #faf9fc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f3f0f8;
+
+  --border-subtle: #e4e0ec;
+  --border-strong: #cfc8dc;
+
+  --text-primary: #1a1721;
+  --text-secondary: #4a4459;
+  --text-muted: #7c7589;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--brand-light);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-light);
+  outline-offset: 2px;
+}
+
+.login-page {
+  overflow-x: hidden;
+}
+
+.login-card,
+.login-intro,
+.login-form-panel,
+.login-form-panel input {
+  min-width: 0;
+}
+
+.brand-logo-initial {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .brand-logo-full {
+    display: none !important;
+  }
+
+  .brand-logo-initial {
+    display: inline-block !important;
+  }
+
+  .login-page {
+    align-items: start;
+    padding: 16px 12px;
+  }
+
+  .login-card {
+    grid-template-columns: minmax(0, 1fr) !important;
+    border-radius: 18px !important;
+  }
+
+  .login-intro {
+    padding: 28px 22px !important;
+    gap: 18px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(34, 26, 52, 0.05);
+  }
+
+  .login-intro h1 {
+    font-size: clamp(2rem, 10vw, 2.7rem) !important;
+  }
+
+  .login-form-panel {
+    padding: 28px 22px !important;
+    gap: 24px !important;
+  }
+
+  .login-form-title {
+    font-size: clamp(1.55rem, 8vw, 2rem) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .login-page {
+    padding: 8px;
+  }
+
+  .login-intro,
+  .login-form-panel {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .login-form-panel > div:last-child {
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.admin-course-list th,
+.admin-course-list td {
+  padding: 6px 8px !important;
+  line-height: 1.2;
+}
+
+.admin-course-list td:first-child {
+  min-width: 220px;
+}
+
+.admin-course-list td:first-child div {
+  margin-top: 2px !important;
+}
+
+.admin-course-list td:last-child button {
+  padding: 4px 6px !important;
+}
+
+.course-editor-resize-handle {
+  transition: background-color 120ms ease;
+}
+
+.course-editor-resize-handle:hover,
+.course-editor-resizing .course-editor-resize-handle {
+  background: var(--brand-light) !important;
+}
+
+.course-editor-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+@media (max-width: 900px) {
+  .course-editor-split {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .course-editor-split > form,
+  .course-editor-split > .course-editor-preview {
+    grid-column: 1 !important;
+  }
+
+  .course-editor-resize-handle {
+    display: none;
+  }
+
+  .course-editor-preview {
+    position: static !important;
+  }
+}

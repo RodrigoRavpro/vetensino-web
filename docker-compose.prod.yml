@@ -1,0 +1,21 @@
+name: vetensino-web
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY}
+    container_name: vetensino-web
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - vetensino-network
+
+networks:
+  vetensino-network:
+    external: true
+    name: vetensino-network
