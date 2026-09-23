@@ -69,7 +69,7 @@ export const LoginPage = () => {
     setMessage('');
     try {
       const user = await authenticateUser(email, password, recaptchaToken || undefined);
-      navigate(user.role === 'ADMIN' ? '/admin/cursos' : '/meus-cursos');
+      navigate(user.role === 'ADMIN' ? '/admin/cursos' : user.role === 'TEACHER' ? '/instructor/cursos' : '/meus-cursos');
     } catch (error: any) {
       const nextFailedAttempts = failedAttempts + 1;
       setFailedAttempts(nextFailedAttempts);

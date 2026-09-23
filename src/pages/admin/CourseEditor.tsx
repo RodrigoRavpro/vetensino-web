@@ -15,7 +15,7 @@ type RegistrationField = 'name' | 'email' | 'phone' | 'company';
 type CourseContent = { eyebrow: string; heroImageUrl: string; audience: string; outcomes: string[]; syllabus: string[]; bonuses: string[]; blocks: CourseBlock[]; sponsors: Sponsor[]; preRegistrationEnabled: boolean; preRegistrationTitle: string; preRegistrationDescription: string; preRegistrationButtonLabel: string; preRegistrationFields: RegistrationField[] };
 type EditorState = { title: string; subtitle: string; slug: string; description: string; coverImageUrl: string; price: string; promoPrice: string; workloadHours: string; instructorId: string; className: string; capacity: string; content: CourseContent };
 
-type Props = { course: Course; onClose: () => void; onSaved: () => Promise<void> };
+type Props = { course: Course; onClose: () => void; onSaved: () => Promise<void>; basePath?: string; showInstructorField?: boolean };
 
 const asList = (value: unknown, fallback: string[]): string[] => Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : fallback;
 const asSponsors = (value: unknown): Sponsor[] => Array.isArray(value) ? value.filter((item): item is Sponsor => Boolean(item && typeof item === 'object' && typeof (item as Sponsor).id === 'string' && typeof (item as Sponsor).logoUrl === 'string')).map((item) => ({ id: item.id, logoUrl: item.logoUrl, name: typeof item.name === 'string' ? item.name.slice(0, 120) : '', size: item.size === 'small' || item.size === 'large' ? item.size : 'medium' })) : [];
@@ -42,7 +42,7 @@ const defaults = (course: Course): EditorState => {
     className: course.classes[0]?.name ?? '',
     capacity: course.classes[0]?.capacity.toString() ?? '20',
     content: {
-      eyebrow: typeof content.eyebrow === 'string' ? content.eyebrow : 'Formação VetEnsino',
+      eyebrow: typeof content.eyebrow === 'string' ? content.eyebrow : '',
       heroImageUrl: typeof content.heroImageUrl === 'string' ? content.heroImageUrl : '',
       audience: typeof content.audience === 'string' ? content.audience : 'Profissionais que desejam evoluir sua prática.',
       outcomes: asList(content.outcomes, ['Conteúdo prático e aplicável', 'Acompanhamento especializado']),
@@ -63,7 +63,7 @@ const splitLines = (value: string): string[] => value.split('\n').map((item) => 
 const fieldStyle = { display: 'grid', gap: spacing.xs, color: 'var(--text-secondary)', fontSize: typography.size.xs, fontWeight: typography.weight.semibold };
 const inputStyle = { width: '100%', boxSizing: 'border-box' as const, minHeight: density.controlHeight, padding: density.controlPadding, border: '1px solid var(--border-strong)', borderRadius: radius.sm, background: 'var(--bg-base)', color: 'var(--text-primary)', fontFamily: typography.fontFamily, fontSize: typography.size.sm };
 
-export const CourseEditor = ({ course, onClose, onSaved }: Props) => {
+export const CourseEditor = ({ course, onClose, onSaved, basePath = '/admin/courses', showInstructorField = true }: Props) => {
   const [state, setState] = useState(() => defaults(course));
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [saving, setSaving] = useState(false);
@@ -82,10 +82,11 @@ export const CourseEditor = ({ course, onClose, onSaved }: Props) => {
   const content = state.content;
 
   useEffect(() => {
+    if (!showInstructorField) return;
     void api.get<{ users: Teacher[] }>('/admin/users', { params: { role: 'TEACHER', limit: 100 } })
       .then((response) => setTeachers(response.data.users))
       .catch(() => setMessage('Não foi possível carregar os docentes.'));
-  }, []);
+  }, [showInstructorField]);
 
   useEffect(() => {
     const handlePointerMove = (event: PointerEvent) => {
@@ -217,7 +218,7 @@ export const CourseEditor = ({ course, onClose, onSaved }: Props) => {
     setSaving(true);
     setMessage('');
     try {
-      await api.patch(`/admin/courses/${course.id}`, {
+      await api.patch(`${basePath}/${course.id}`, {
         title: state.title,
         subtitle: state.subtitle || null,
         slug: state.slug,
@@ -226,12 +227,13 @@ export const CourseEditor = ({ course, onClose, onSaved }: Props) => {
         price: Number(state.price),
         promoPrice: state.promoPrice ? Number(state.promoPrice) : null,
         workloadHours: state.workloadHours ? Number(state.workloadHours) : null,
-        instructorId: state.instructorId,
+        // `instructorId` só é aceito no fluxo admin (reatribuição); a API do docente rejeita o campo (.strict()).
+        ...(showInstructorField ? { instructorId: state.instructorId } : {}),
         certificateEnabled: true,
         contentJson: content,
       });
       const firstClass = course.classes[0];
-      if (firstClass) await api.patch(`/admin/courses/${course.id}/classes/${firstClass.id}`, { name: state.className, capacity: Number(state.capacity) });
+      if (firstClass) await api.patch(`${basePath}/${course.id}/classes/${firstClass.id}`, { name: state.className, capacity: Number(state.capacity) });
       setMessage('Curso salvo com sucesso.');
       await onSaved();
     } catch {
@@ -248,7 +250,7 @@ export const CourseEditor = ({ course, onClose, onSaved }: Props) => {
         <label style={fieldStyle}>Título<input required value={state.title} onChange={(event) => update('title', event.target.value)} style={inputStyle} /></label>
         <label style={fieldStyle}>Subtítulo<input value={state.subtitle} onChange={(event) => update('subtitle', event.target.value)} style={inputStyle} /></label>
         <label style={fieldStyle}>Slug<input required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={state.slug} onChange={(event) => update('slug', event.target.value)} style={inputStyle} /></label>
-        <label style={fieldStyle}>Docente<select required value={state.instructorId} onChange={(event) => update('instructorId', event.target.value)} style={inputStyle}><option value="">Selecione o docente</option>{teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name} ({teacher.email})</option>)}</select></label>
+        {showInstructorField && <label style={fieldStyle}>Docente<select required value={state.instructorId} onChange={(event) => update('instructorId', event.target.value)} style={inputStyle}><option value="">Selecione o docente</option>{teachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name} ({teacher.email})</option>)}</select></label>}
         <label style={fieldStyle}>Descrição<ReactQuill theme="snow" value={state.description} onChange={(value) => update('description', value)} /></label>
         <label style={fieldStyle}>Imagem de capa<input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading} onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage(file, 'cover'); }} style={inputStyle} /></label>
         {state.coverImageUrl && <img src={state.coverImageUrl} alt="Capa do curso" style={{ width: '100%', maxHeight: 150, objectFit: 'cover', borderRadius: radius.sm }} />}

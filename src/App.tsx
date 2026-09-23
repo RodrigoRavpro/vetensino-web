@@ -8,15 +8,32 @@ import { LoginPage } from './pages/LoginPage';
 import { AdminCoursesEnterprisePage } from './pages/admin/AdminCoursesEnterprisePage';
 import { AdminUsersEnterprisePage } from './pages/admin/AdminUsersEnterprisePage';
 import { AdminDesignSystemPage } from './pages/admin/AdminDesignSystemPage';
+import { InstructorDashboardPage } from './pages/instructor/InstructorDashboardPage';
+import { InstructorEnrollmentsPage } from './pages/instructor/InstructorEnrollmentsPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { MyCoursesPage } from './pages/MyCoursesPage';
+
+const homeForRole = (role?: string): string => {
+  if (role === 'ADMIN') return '/admin/cursos';
+  if (role === 'TEACHER') return '/instructor/cursos';
+  return '/meus-cursos';
+};
 
 const AdminRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) return <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>Validando sessão...</div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user?.role !== 'ADMIN') return <Navigate to="/" replace />;
+  if (user?.role !== 'ADMIN') return <Navigate to={homeForRole(user?.role)} replace />;
+  return <>{children}</>;
+};
+
+const InstructorRoute = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  if (isLoading) return <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>Validando sessão...</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (user?.role !== 'TEACHER') return <Navigate to={homeForRole(user?.role)} replace />;
   return <>{children}</>;
 };
 
@@ -25,7 +42,7 @@ const UserCoursesRoute = ({ children }: { children: ReactNode }) => {
 
   if (isLoading) return <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>Validando sessão...</div>;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user?.role === 'ADMIN') return <Navigate to="/admin/cursos" replace />;
+  if (user?.role === 'ADMIN' || user?.role === 'TEACHER') return <Navigate to={homeForRole(user.role)} replace />;
   return <>{children}</>;
 };
 
@@ -37,6 +54,8 @@ const AppRoutes = () => (
         <Route path="/admin/cursos" element={<AdminRoute><AdminCoursesEnterprisePage /></AdminRoute>} />
         <Route path="/admin/usuarios" element={<AdminRoute><AdminUsersEnterprisePage /></AdminRoute>} />
         <Route path="/admin/design-system" element={<AdminRoute><AdminDesignSystemPage /></AdminRoute>} />
+        <Route path="/instructor/cursos" element={<InstructorRoute><InstructorDashboardPage /></InstructorRoute>} />
+        <Route path="/instructor/inscricoes" element={<InstructorRoute><InstructorEnrollmentsPage /></InstructorRoute>} />
         <Route path="/meus-cursos" element={<UserCoursesRoute><MyCoursesPage /></UserCoursesRoute>} />
         <Route path="/cursos/:slug" element={<CourseDetailPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />

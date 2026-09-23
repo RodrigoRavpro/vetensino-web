@@ -1,59 +1,13 @@
 import bannerHero from '../../assets/banner.png';
 import bannerMobile from '../../assets/banner-sm.png';
-import { useEffect, useState } from 'react';
 import BrandLogo from '../../components/BrandLogo';
-import { api } from '../../services/api';
+import { PublicFooter } from '../../components/public/PublicFooter';
 import { spacing, radius, typography } from '../../styles/designSystem';
 
-const navItems = ['Cursos', 'Como funciona', 'Resultados', 'Preços'];
-
-const mockFeaturedCourses = [
-  {
-    id: 'medicina-veterinaria',
-    title: 'Medicina Veterinária',
-    subtitle: 'Fundamentos e atendimento clínico',
-    category: 'Saúde e diagnóstico',
-    level: 'Iniciante',
-    rating: '4.9',
-    students: '2.4k',
-    duration: '12 módulos',
-    price: 'R$ 499',
-    tag: 'Mais vendido',
-  },
-  {
-    id: 'cirurgia',
-    title: 'Cirurgia e Procedimentos',
-    subtitle: 'Práticas seguras e protocolos clínicos',
-    category: 'Procedimentos',
-    level: 'Intermediário',
-    rating: '4.8',
-    students: '1.8k',
-    duration: '10 módulos',
-    price: 'R$ 399',
-    tag: 'Popular',
-  },
-  {
-    id: 'gestao-clinica',
-    title: 'Gestão Clínica',
-    subtitle: 'Fluxos, faturamento e performance da clínica',
-    category: 'Negócios',
-    level: 'Todos os níveis',
-    rating: '4.9',
-    students: '3.1k',
-    duration: '9 módulos',
-    price: 'R$ 349',
-    tag: 'Novo',
-  },
-];
-
-type FeaturedCourse = (typeof mockFeaturedCourses)[number];
-
-const footerLinks = [
-  { label: 'Cursos', href: '#' },
-  { label: 'Sobre', href: '#' },
-  { label: 'Contato', href: '#' },
-  { label: 'Política de Privacidade', href: '#' },
-  { label: 'Termos de Uso', href: '#' },
+const navItems = [
+  { label: 'Como funciona', href: '#como-funciona' },
+  { label: 'Para quem é', href: '#para-quem-e' },
+  { label: 'Treinamentos', href: '#treinamentos' },
 ];
 
 const PublicHeader = () => (
@@ -136,14 +90,14 @@ const PublicHeader = () => (
         >
           {navItems.map((item) => (
             <a
-              key={item}
-              href="#"
+              key={item.label}
+              href={item.href}
               style={{
                 color: 'inherit',
                 textDecoration: 'none',
               }}
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -331,7 +285,7 @@ const PublicHero = () => (
               maxWidth: '620px',
             }}
           >
-            Aprenda com quem entende a rotina do veterinário
+            Treinamentos veterinários que viram prática
           </h1>
 
           <p
@@ -344,13 +298,13 @@ const PublicHero = () => (
               maxWidth: '560px',
             }}
           >
-            Especialização prática em medicina veterinária, diagnóstico e gestão para evoluir com confiança.
+            Uma plataforma para veterinários criarem, organizarem e acompanharem capacitações para profissionais e equipes clínicas.
           </p>
         </div>
 
         <div className="purple-cursos-hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.sm, maxWidth: '620px' }}>
           <a
-            href="/cursos/medicina-veterinaria"
+            href="#treinamentos"
             style={{
               textDecoration: 'none',
               display: 'inline-flex',
@@ -367,10 +321,10 @@ const PublicHero = () => (
               boxShadow: '0 16px 28px rgba(93, 62, 170, 0.2)',
             }}
           >
-            Ver cursos
+            Explorar treinamentos
           </a>
           <a
-            href="/login"
+            href="/instructor/cursos"
             style={{
               textDecoration: 'none',
               display: 'inline-flex',
@@ -386,7 +340,7 @@ const PublicHero = () => (
               minWidth: '220px',
             }}
           >
-            Falar com consultor
+            Criar um treinamento
           </a>
         </div>
       </div>
@@ -419,308 +373,30 @@ const PublicHero = () => (
   </>
 );
 
-const PublicFeaturedCourses = ({ courses }: { courses: FeaturedCourse[] }) => {
-  if (courses.length === 0) {
-    return null;
-  }
-
-  return (
-    <section
-      style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '52px 18px 28px',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'end',
-          gap: spacing.md,
-          marginBottom: spacing.lg,
-          flexWrap: 'wrap',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: spacing.sm,
-              padding: `${spacing.xs} ${spacing.sm}`,
-              borderRadius: radius.pill,
-              background: 'var(--brand-subtle)',
-              color: 'var(--brand-primary)',
-              fontSize: typography.size.xs,
-              fontWeight: typography.weight.bold,
-              marginBottom: spacing.sm,
-            }}
-          >
-            Cursos em destaque
-          </div>
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              lineHeight: 1.1,
-              fontWeight: typography.weight.bold,
-            }}
-          >
-            Descubra trilhas pensadas para crescer na prática
-          </h2>
-        </div>
-        <a
-          href="/cursos/medicina-veterinaria"
-          style={{
-            textDecoration: 'none',
-            color: 'var(--brand-primary)',
-            fontWeight: typography.weight.bold,
-          }}
-        >
-          Ver todos os cursos
-        </a>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '18px',
-        }}
-      >
-        {courses.map((course) => (
-          <article
-            key={course.id}
-            style={{
-              display: 'grid',
-              gap: spacing.sm,
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: radius.xl,
-              padding: '18px',
-              overflow: 'hidden',
-              boxShadow: '0 16px 32px rgba(18, 12, 28, 0.04)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: spacing.sm,
-              }}
-            >
-              <span
-                style={{
-                  display: 'inline-flex',
-                  padding: `${spacing.xs} ${spacing.sm}`,
-                  borderRadius: radius.pill,
-                  background: 'var(--brand-subtle)',
-                  color: 'var(--brand-primary)',
-                  fontSize: typography.size.xs,
-                  fontWeight: typography.weight.bold,
-                }}
-              >
-                {course.tag}
-              </span>
-              <span style={{ color: 'var(--text-muted)', fontSize: typography.size.sm }}>
-                {course.level}
-              </span>
-            </div>
-
-            <div
-              style={{
-                background: 'linear-gradient(135deg, rgba(136,84,192,0.12), rgba(169,127,217,0.18))',
-                borderRadius: radius.lg,
-                minHeight: '120px',
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--brand-primary)',
-                fontWeight: typography.weight.bold,
-                fontSize: typography.size.lg,
-                border: '1px solid rgba(136,84,192,0.12)',
-              }}
-            >
-              {course.category}
-            </div>
-
-            <div style={{ display: 'grid', gap: spacing.xs }}>
-              <div style={{ fontSize: typography.size.xs, color: 'var(--text-muted)' }}>{course.category}</div>
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: '1.25rem',
-                  lineHeight: 1.25,
-                  fontWeight: typography.weight.bold,
-                }}
-              >
-                {course.title}
-              </h3>
-              <p
-                style={{
-                  margin: 0,
-                  color: 'var(--text-secondary)',
-                  lineHeight: 1.5,
-                  fontSize: '0.96rem',
-                }}
-              >
-                {course.subtitle}
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                color: 'var(--text-muted)',
-                fontSize: '0.82rem',
-                paddingTop: spacing.sm,
-                borderTop: '1px solid var(--border-subtle)',
-              }}
-            >
-              <span>⭐ {course.rating}</span>
-              <span>{course.students} alunos</span>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: spacing.sm,
-              }}
-            >
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>{course.duration}</span>
-              <strong style={{ fontSize: '1.35rem', color: 'var(--text-primary)' }}>{course.price}</strong>
-            </div>
-
-            <a
-              href={`/cursos/${course.id}`}
-              style={{
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '12px 16px',
-                borderRadius: radius.pill,
-                background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-light))',
-                color: 'var(--text-on-brand)',
-                fontWeight: typography.weight.bold,
-                marginTop: '2px',
-              }}
-            >
-              Saiba mais
-            </a>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const PublicFooter = () => (
-  <footer
-    style={{
-      borderTop: '1px solid var(--border-subtle)',
-      background: 'var(--bg-surface)',
-      marginTop: spacing.xxl,
-    }}
-  >
-    <div
-      style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: `${spacing.xl} ${spacing.xl}`,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: spacing.xl,
-      }}
-    >
-      <div style={{ display: 'grid', gap: spacing.md }}>
-        <BrandLogo size="sm" compact />
-      </div>
-
-      <div style={{ display: 'grid', gap: spacing.sm }}>
-        <strong style={{ fontSize: typography.size.md }}>Acesso rápido</strong>
-        {footerLinks.slice(0, 3).map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            style={{
-              color: 'var(--text-secondary)',
-              textDecoration: 'none',
-            }}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gap: spacing.sm }}>
-        <strong style={{ fontSize: typography.size.md }}>Legal</strong>
-        {footerLinks.slice(3).map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            style={{
-              color: 'var(--text-secondary)',
-              textDecoration: 'none',
-            }}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
+const HomeSection = ({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: React.ReactNode }) => (
+  <section id={id} style={{ maxWidth: '1200px', margin: '0 auto', padding: '72px 18px 0' }}>
+    <div style={{ maxWidth: '720px', display: 'grid', gap: spacing.sm, marginBottom: spacing.xl }}>
+      <span style={{ color: 'var(--brand-primary)', fontSize: typography.size.xs, fontWeight: typography.weight.bold, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{eyebrow}</span>
+      <h2 style={{ margin: 0, fontSize: 'clamp(1.9rem, 4vw, 3rem)', lineHeight: 1.08, fontWeight: typography.weight.bold }}>{title}</h2>
     </div>
-
-    <div
-      style={{
-        borderTop: '1px solid var(--border-subtle)',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: `${spacing.md} ${spacing.xl}`,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: spacing.md,
-        flexWrap: 'wrap',
-        color: 'var(--text-muted)',
-        fontSize: typography.size.sm,
-      }}
-    >
-      <span>© 2026 VetEnsino</span>
-      <span>Plataforma criada com foco em educação veterinária.</span>
-    </div>
-  </footer>
+    {children}
+  </section>
 );
 
-export const LandingPage = () => {
-  const [featuredCourses, setFeaturedCourses] = useState<FeaturedCourse[]>(mockFeaturedCourses);
+const benefitItems = [
+  { title: 'Conteúdo de quem pratica', text: 'Treinamentos criados por veterinários que conhecem os desafios da rotina clínica.' },
+  { title: 'Turmas organizadas', text: 'Estruture cursos, turmas e formatos online, presenciais ou híbridos em um só lugar.' },
+  { title: 'Evolução acompanhada', text: 'Acompanhe matrículas, progresso e conclusão para transformar conteúdo em prática.' },
+];
 
-  useEffect(() => {
-    let active = true;
-    void api.get<{ courses: Array<{ id: string; slug: string; title: string; subtitle: string | null; price: string; promoPrice: string | null; workloadHours: number | null; classes: Array<{ capacity: number }> }> }>('/courses')
-      .then(({ data }) => {
-        if (!active || data.courses.length === 0) return;
-        setFeaturedCourses(data.courses.map((course) => ({
-          id: course.slug,
-          title: course.title,
-          subtitle: course.subtitle ?? 'Conteúdo especializado para profissionais veterinários.',
-          category: 'Cursos veterinários',
-          level: 'Todos os níveis',
-          rating: 'Novo',
-          students: `${course.classes.length} turma(s)`,
-          duration: course.workloadHours ? `${course.workloadHours} horas` : 'Acesso online',
-          price: `R$ ${course.promoPrice ?? course.price}`,
-          tag: course.promoPrice ? 'Oferta' : 'Novo',
-        })));
-      })
-      .catch(() => undefined);
-    return () => { active = false; };
-  }, []);
+const audienceItems = [
+  { title: 'Veterinários e equipes', text: 'Encontre capacitações aplicáveis ao momento profissional e à rotina da sua equipe.' },
+  { title: 'Instrutores', text: 'Publique seu conhecimento, organize turmas e acompanhe seus alunos.' },
+  { title: 'Clínicas e hospitais', text: 'Estruture treinamentos internos e mantenha o desenvolvimento da equipe visível.' },
+];
 
+export const LandingPage = () => (
+  <>
   return (
     <main
       style={{
@@ -731,10 +407,47 @@ export const LandingPage = () => {
     >
       <PublicHeader />
       <PublicHero />
-      <PublicFeaturedCourses courses={featuredCourses} />
+      <HomeSection id="como-funciona" eyebrow="Uma plataforma, diferentes jornadas" title="Da experiência do veterinário ao treinamento que a equipe consegue acompanhar.">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: spacing.md }}>
+          {benefitItems.map((item, index) => (
+            <article key={item.title} style={{ display: 'grid', gap: spacing.sm, padding: spacing.lg, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: radius.lg }}>
+              <span style={{ color: 'var(--brand-primary)', fontSize: typography.size.sm, fontWeight: typography.weight.bold }}>0{index + 1}</span>
+              <h3 style={{ margin: 0, fontSize: typography.size.md }}>{item.title}</h3>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="para-quem-e" eyebrow="Feito para a rotina veterinária" title="Cada pessoa entra com uma necessidade. Todos avançam com mais clareza.">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: spacing.md }}>
+          {audienceItems.map((item) => (
+            <article key={item.title} style={{ display: 'grid', gap: spacing.sm, padding: spacing.lg, borderLeft: '3px solid var(--brand-primary)', background: 'rgba(136, 84, 192, 0.06)' }}>
+              <h3 style={{ margin: 0, fontSize: typography.size.md }}>{item.title}</h3>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </HomeSection>
+
+      <HomeSection id="treinamentos" eyebrow="Catálogo em construção contínua" title="Treinamentos para desenvolver pessoas e melhorar a prática.">
+        <div style={{ display: 'grid', gap: spacing.md, padding: spacing.xl, borderRadius: radius.lg, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: spacing.md, flexWrap: 'wrap' }}>
+            <div style={{ display: 'grid', gap: spacing.xs }}>
+              <h3 style={{ margin: 0, fontSize: typography.size.lg }}>Explore o primeiro treinamento disponível</h3>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.5 }}>Acesse o conteúdo publicado, conheça a turma e escolha o próximo passo da sua formação.</p>
+            </div>
+            <a href="/cursos/medicina-veterinaria" style={{ textDecoration: 'none', color: 'var(--brand-primary)', fontWeight: typography.weight.bold }}>Ver treinamento</a>
+          </div>
+          <div style={{ display: 'flex', gap: spacing.sm, flexWrap: 'wrap', color: 'var(--text-muted)', fontSize: typography.size.sm }}>
+            <span>Medicina veterinária</span><span>Diagnóstico</span><span>Gestão de clínicas</span>
+          </div>
+        </div>
+      </HomeSection>
+
       <PublicFooter />
     </main>
-  );
-};
+  </>
+);
 
 export default LandingPage;
