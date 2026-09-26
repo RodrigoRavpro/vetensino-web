@@ -1,7 +1,7 @@
-import bannerHero from '../../assets/banner.png';
-import bannerMobile from '../../assets/banner-sm.png';
+import { useEffect, useState } from 'react';
 import BrandLogo from '../../components/BrandLogo';
 import { PublicFooter } from '../../components/public/PublicFooter';
+import { VEHero } from '../../components/public/VEHeroEditorial';
 import { spacing, radius, typography } from '../../styles/designSystem';
 
 const navItems = [
@@ -10,9 +10,51 @@ const navItems = [
   { label: 'Treinamentos', href: '#treinamentos' },
 ];
 
-const PublicHeader = () => (
-  <>
+const PublicHeader = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateHeader = () => setIsScrolled(window.scrollY > 24);
+
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    return () => window.removeEventListener('scroll', updateHeader);
+  }, []);
+
+  return (
+    <>
     <style>{`
+      .vetensino-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        border-radius: 999px;
+        background: #f4b21a;
+        transform: translateX(-50%);
+        transition: width 180ms ease;
+      }
+
+      .vetensino-header.is-scrolled::after {
+        width: min(180px, 34vw);
+      }
+
+      .vetensino-header:not(.is-scrolled) .vetensino-header-nav {
+        color: rgba(255, 255, 255, 0.84) !important;
+      }
+
+      .vetensino-header:not(.is-scrolled) .vetensino-header-menu > span,
+      .vetensino-header:not(.is-scrolled) .vetensino-header-menu > span > span {
+        background: #fff !important;
+      }
+
+      .vetensino-mobile-nav {
+        display: none;
+      }
+
       @media (max-width: 900px) {
         .vetensino-header {
           padding: 10px 14px !important;
@@ -37,6 +79,14 @@ const PublicHeader = () => (
           display: none !important;
         }
 
+        .vetensino-header-wordmark .brand-logo-full {
+          display: inline-block !important;
+        }
+
+        .vetensino-header-wordmark .brand-logo-initial {
+          display: none !important;
+        }
+
         .vetensino-header-nav {
           display: none !important;
         }
@@ -48,18 +98,41 @@ const PublicHeader = () => (
         .vetensino-header-menu {
           display: inline-flex !important;
         }
+
+        .vetensino-mobile-nav {
+          display: grid;
+          gap: 2px;
+          padding: 4px 14px 14px;
+          border-top: 1px solid var(--border-subtle);
+          background: var(--bg-surface);
+        }
+
+        .vetensino-mobile-nav a {
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          padding: 0 8px;
+          color: var(--text-primary);
+          font-size: 0.9rem;
+          font-weight: 600;
+          text-decoration: none;
+        }
       }
     `}</style>
 
     <header
-      className="vetensino-header"
+      className={`vetensino-header${isScrolled ? ' is-scrolled' : ''}`}
       style={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
+        right: 0,
+        left: 0,
         zIndex: 10,
-        backdropFilter: 'blur(12px)',
-        background: 'color-mix(in srgb, var(--bg-base) 82%, transparent)',
-        borderBottom: '1px solid var(--border-subtle)',
+        backdropFilter: isScrolled || isMenuOpen ? 'blur(12px)' : 'none',
+        background: isScrolled || isMenuOpen ? 'rgba(255, 255, 255, 0.96)' : 'transparent',
+        borderBottom: '1px solid transparent',
+        boxShadow: isScrolled ? '0 8px 24px rgba(32, 28, 37, 0.08)' : 'none',
+        transition: 'background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease',
       }}
     >
       <div
@@ -75,7 +148,7 @@ const PublicHeader = () => (
         }}
       >
         <div className="vetensino-header-brand" style={{ display: 'flex', alignItems: 'center', gap: spacing.sm }}>
-          <BrandLogo size="sm" compact />
+          <BrandLogo className="vetensino-header-wordmark" size="sm" compact />
         </div>
 
         <nav
@@ -109,11 +182,11 @@ const PublicHeader = () => (
             style={{
               textDecoration: 'none',
               border: 'none',
-              background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-light))',
+              background: '#5d3e8f',
               color: 'var(--text-on-brand)',
-              borderRadius: radius.pill,
+              borderRadius: radius.md,
               padding: `${spacing.sm} ${spacing.lg}`,
-              fontWeight: typography.weight.medium,
+              fontWeight: typography.weight.semibold,
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
@@ -126,7 +199,10 @@ const PublicHeader = () => (
           <button
             className="vetensino-header-menu"
             type="button"
-            aria-label="Abrir menu"
+            aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="vetensino-mobile-nav"
+            onClick={() => setIsMenuOpen((current) => !current)}
             style={{
               display: 'none',
               width: 40,
@@ -178,215 +254,35 @@ const PublicHeader = () => (
           </button>
         </div>
       </div>
+      {isMenuOpen && (
+        <nav id="vetensino-mobile-nav" className="vetensino-mobile-nav" aria-label="Navegação principal">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} onClick={() => setIsMenuOpen(false)}>
+              {item.label}
+            </a>
+          ))}
+          <a href="/login">Entrar</a>
+        </nav>
+      )}
     </header>
   </>
-);
-
-const PublicHero = () => (
-  <>
-    <style>{`
-      .vetensino-hero {
-        aspect-ratio: 16 / 7.8;
-      }
-
-      @media (max-width: 900px) {
-        .vetensino-hero {
-          aspect-ratio: 1 / 1.08 !important;
-          min-height: 0 !important;
-          background-image: url('${bannerMobile}') !important;
-          background-size: cover !important;
-          background-position: center center !important;
-        }
-
-        .vetensino-hero-inner {
-          grid-template-columns: 1fr !important;
-          padding: 22px 18px 26px !important;
-          min-height: 0 !important;
-        }
-
-        .vetensino-hero-copy {
-          max-width: 100% !important;
-          gap: 14px !important;
-        }
-
-        .vetensino-hero-title {
-          max-width: 100% !important;
-          font-size: clamp(2.5rem, 9vw, 3.8rem) !important;
-        }
-
-        .vetensino-hero-text {
-          max-width: 100% !important;
-          font-size: 1rem !important;
-        }
-
-        .vetensino-hero-actions {
-          width: 100% !important;
-        }
-
-        .vetensino-hero-actions a {
-          flex: 1 1 100% !important;
-          width: 100% !important;
-        }
-      }
-    `}</style>
-
-    <section
-      className="vetensino-hero"
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        marginTop: 0,
-        minHeight: 0,
-        borderBottom: '1px solid rgba(255,255,255,0.12)',
-        backgroundImage: `url(${bannerHero})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-        backgroundRepeat: 'no-repeat',
-        width: '100%',
-        height: 'auto',
-      }}
-    >
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        opacity: 0.22,
-        backgroundImage:
-          'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.09) 18%, transparent 18%), radial-gradient(circle at 50% 60%, rgba(255,255,255,0.25) 0, rgba(255,255,255,0.08) 12%, transparent 12%)',
-      }}
-    />
-
-    <div
-      className="vetensino-hero-inner"
-      style={{
-        position: 'relative',
-        maxWidth: '1280px',
-        margin: '0 auto',
-        minHeight: '100%',
-        display: 'grid',
-        gridTemplateColumns: '1.3fr 0.7fr',
-        alignItems: 'center',
-        gap: '20px',
-        padding: '0 20px',
-        height: '100%',
-      }}
-    >
-      <div style={{ display: 'grid', gap: spacing.lg, position: 'relative', zIndex: 2, padding: '20px 0 18px' }}>
-        <div className="vetensino-hero-copy" style={{ display: 'grid', gap: spacing.sm, maxWidth: '620px' }}>
-          <h1
-            className="vetensino-hero-title"
-            style={{
-              margin: 0,
-              fontSize: 'clamp(2.6rem, 4.4vw, 5.6rem)',
-              lineHeight: 0.94,
-              letterSpacing: '-0.07em',
-              fontWeight: typography.weight.bold,
-              color: '#20162f',
-              maxWidth: '620px',
-            }}
-          >
-            Treinamentos veterinários que viram prática
-          </h1>
-
-          <p
-            className="vetensino-hero-text"
-            style={{
-              margin: 0,
-              color: 'rgba(32, 22, 47, 0.82)',
-              fontSize: 'clamp(1rem, 1.4vw, 1.35rem)',
-              lineHeight: 1.38,
-              maxWidth: '560px',
-            }}
-          >
-            Uma plataforma para veterinários criarem, organizarem e acompanharem capacitações para profissionais e equipes clínicas.
-          </p>
-        </div>
-
-        <div className="vetensino-hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.sm, maxWidth: '620px' }}>
-          <a
-            href="#treinamentos"
-            style={{
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: 'none',
-              background: 'linear-gradient(135deg, #5d3eaa, #7d5ad0)',
-              color: '#fff',
-              borderRadius: '999px',
-              padding: '15px 22px',
-              fontWeight: typography.weight.bold,
-              fontSize: '1rem',
-              minWidth: '200px',
-              boxShadow: '0 16px 28px rgba(93, 62, 170, 0.2)',
-            }}
-          >
-            Explorar treinamentos
-          </a>
-          <a
-            href="/instructor/cursos"
-            style={{
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid rgba(32, 22, 47, 0.2)',
-              background: 'rgba(255,255,255,0.08)',
-              color: '#20162f',
-              borderRadius: '999px',
-              padding: '15px 22px',
-              fontWeight: typography.weight.bold,
-              fontSize: '1rem',
-              minWidth: '220px',
-            }}
-          >
-            Criar um treinamento
-          </a>
-        </div>
-      </div>
-
-      <div
-        style={{
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '480px',
-          zIndex: 2,
-          opacity: 0,
-          pointerEvents: 'none',
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '620px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        />
-      </div>
-    </div>
-    </section>
-  </>
-);
+  );
+};
 
 const HomeSection = ({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: React.ReactNode }) => (
-  <section id={id} style={{ maxWidth: '1200px', margin: '0 auto', padding: '72px 18px 0' }}>
-    <div style={{ maxWidth: '720px', display: 'grid', gap: spacing.sm, marginBottom: spacing.xl }}>
-      <span style={{ color: 'var(--brand-primary)', fontSize: typography.size.xs, fontWeight: typography.weight.bold, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{eyebrow}</span>
-      <h2 style={{ margin: 0, fontSize: 'clamp(1.9rem, 4vw, 3rem)', lineHeight: 1.08, fontWeight: typography.weight.bold }}>{title}</h2>
+  <section className="landing-section" id={id} style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 18px 0' }}>
+    <div className="landing-section-header" style={{ maxWidth: '860px', display: 'grid', gap: '6px', marginBottom: spacing.lg }}>
+      <span style={{ color: 'var(--text-muted)', fontSize: typography.size.xs, fontWeight: typography.weight.bold, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{eyebrow}</span>
+      <h2 style={{ margin: 0, fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', lineHeight: 1.15, letterSpacing: 0, fontWeight: typography.weight.bold }}>{title}</h2>
     </div>
     {children}
   </section>
 );
 
 const benefitItems = [
-  { title: 'Conteúdo de quem pratica', text: 'Treinamentos criados por veterinários que conhecem os desafios da rotina clínica.' },
-  { title: 'Turmas organizadas', text: 'Estruture cursos, turmas e formatos online, presenciais ou híbridos em um só lugar.' },
-  { title: 'Evolução acompanhada', text: 'Acompanhe matrículas, progresso e conclusão para transformar conteúdo em prática.' },
+  { title: 'Conteúdo aplicado', text: 'Treinamentos criados por profissionais que conhecem os desafios da rotina clínica.' },
+  { title: 'Gestão de turmas', text: 'Organize cursos, participantes e formatos online, presenciais ou híbridos em um só lugar.' },
+  { title: 'Acompanhamento', text: 'Consulte matrículas, progresso e conclusão para orientar o desenvolvimento da equipe.' },
 ];
 
 const audienceItems = [
@@ -396,22 +292,21 @@ const audienceItems = [
 ];
 
 export const LandingPage = () => (
-  <>
-  return (
-    <main
+  <main
       style={{
         minHeight: '100vh',
-        background: 'var(--bg-base)',
+        background: '#f7f7f5',
         color: 'var(--text-primary)',
+        fontFamily: typography.fontFamily,
       }}
     >
       <PublicHeader />
-      <PublicHero />
-      <HomeSection id="como-funciona" eyebrow="Uma plataforma, diferentes jornadas" title="Da experiência do veterinário ao treinamento que a equipe consegue acompanhar.">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: spacing.md }}>
+      <VEHero />
+      <HomeSection id="como-funciona" eyebrow="Operação de treinamento" title="Crie, organize e acompanhe treinamentos em um único fluxo.">
+        <div className="landing-structured-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', borderTop: '1px solid var(--border-strong)', borderBottom: '1px solid var(--border-subtle)' }}>
           {benefitItems.map((item, index) => (
-            <article key={item.title} style={{ display: 'grid', gap: spacing.sm, padding: spacing.lg, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: radius.lg }}>
-              <span style={{ color: 'var(--brand-primary)', fontSize: typography.size.sm, fontWeight: typography.weight.bold }}>0{index + 1}</span>
+            <article key={item.title} style={{ display: 'grid', alignContent: 'start', gap: spacing.sm, padding: `${spacing.lg} ${spacing.lg}`, borderRight: index < benefitItems.length - 1 ? '1px solid var(--border-subtle)' : 'none' }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: typography.size.xs, fontWeight: typography.weight.bold }}>0{index + 1}</span>
               <h3 style={{ margin: 0, fontSize: typography.size.md }}>{item.title}</h3>
               <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{item.text}</p>
             </article>
@@ -419,10 +314,10 @@ export const LandingPage = () => (
         </div>
       </HomeSection>
 
-      <HomeSection id="para-quem-e" eyebrow="Feito para a rotina veterinária" title="Cada pessoa entra com uma necessidade. Todos avançam com mais clareza.">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: spacing.md }}>
-          {audienceItems.map((item) => (
-            <article key={item.title} style={{ display: 'grid', gap: spacing.sm, padding: spacing.lg, borderLeft: '3px solid var(--brand-primary)', background: 'rgba(136, 84, 192, 0.06)' }}>
+      <HomeSection id="para-quem-e" eyebrow="Aplicação por perfil" title="Uma plataforma para quem ensina, aprende e coordena equipes.">
+        <div className="landing-structured-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', borderTop: '1px solid var(--border-strong)', borderBottom: '1px solid var(--border-subtle)' }}>
+          {audienceItems.map((item, index) => (
+            <article key={item.title} style={{ display: 'grid', alignContent: 'start', gap: spacing.sm, padding: spacing.lg, borderLeft: index > 0 ? '1px solid var(--border-subtle)' : 'none' }}>
               <h3 style={{ margin: 0, fontSize: typography.size.md }}>{item.title}</h3>
               <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{item.text}</p>
             </article>
@@ -430,14 +325,14 @@ export const LandingPage = () => (
         </div>
       </HomeSection>
 
-      <HomeSection id="treinamentos" eyebrow="Catálogo em construção contínua" title="Treinamentos para desenvolver pessoas e melhorar a prática.">
-        <div style={{ display: 'grid', gap: spacing.md, padding: spacing.xl, borderRadius: radius.lg, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+      <HomeSection id="treinamentos" eyebrow="Catálogo" title="Treinamentos disponíveis para a rotina veterinária.">
+        <div style={{ display: 'grid', gap: spacing.md, padding: `${spacing.lg} 0`, borderTop: '1px solid var(--border-strong)', borderBottom: '1px solid var(--border-subtle)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: spacing.md, flexWrap: 'wrap' }}>
             <div style={{ display: 'grid', gap: spacing.xs }}>
               <h3 style={{ margin: 0, fontSize: typography.size.lg }}>Explore o primeiro treinamento disponível</h3>
               <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.5 }}>Acesse o conteúdo publicado, conheça a turma e escolha o próximo passo da sua formação.</p>
             </div>
-            <a href="/cursos/medicina-veterinaria" style={{ textDecoration: 'none', color: 'var(--brand-primary)', fontWeight: typography.weight.bold }}>Ver treinamento</a>
+            <a className="landing-training-link" href="/cursos/medicina-veterinaria" style={{ textDecoration: 'none', color: 'var(--brand-primary)', fontWeight: typography.weight.bold }}>Ver treinamento</a>
           </div>
           <div style={{ display: 'flex', gap: spacing.sm, flexWrap: 'wrap', color: 'var(--text-muted)', fontSize: typography.size.sm }}>
             <span>Medicina veterinária</span><span>Diagnóstico</span><span>Gestão de clínicas</span>
@@ -447,7 +342,6 @@ export const LandingPage = () => (
 
       <PublicFooter />
     </main>
-  </>
 );
 
 export default LandingPage;

@@ -53,7 +53,7 @@ body {
   margin: 0;
   background-color: var(--bg-base);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
   font-size: 16px;
   line-height: 1.6;
@@ -79,6 +79,29 @@ img {
   display: block;
 }
 
+.purplevet-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  filter: grayscale(1);
+  opacity: 0.65;
+  transition: filter 180ms ease, opacity 180ms ease;
+}
+
+.purplevet-credit:hover,
+.purplevet-credit:focus-visible {
+  filter: none;
+  opacity: 1;
+  text-decoration: none;
+}
+
+.landing-training-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
 :focus-visible {
   outline: 2px solid var(--brand-light);
   outline-offset: 2px;
@@ -100,6 +123,43 @@ img {
 }
 
 @media (max-width: 760px) {
+  .landing-section {
+    padding: 36px 16px 0 !important;
+  }
+
+  .landing-section-header {
+    margin-bottom: 16px !important;
+  }
+
+  .landing-section-header h2 {
+    font-size: clamp(1.55rem, 7vw, 2rem) !important;
+  }
+
+  .landing-structured-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .landing-structured-grid article {
+    padding: 18px 0 !important;
+    border-right: 0 !important;
+    border-left: 0 !important;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .landing-structured-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .public-footer-main {
+    padding: 24px 16px !important;
+    gap: 24px !important;
+  }
+
+  .public-footer-bottom {
+    padding: 16px !important;
+    align-items: flex-start !important;
+  }
+
   .brand-logo-full {
     display: none !important;
   }

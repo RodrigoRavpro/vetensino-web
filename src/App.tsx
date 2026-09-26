@@ -4,6 +4,8 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { LandingPage } from './pages/public/LandingPage';
+import { PrivacyPolicyPage } from './pages/public/PrivacyPolicyPage';
+import { TermsOfUsePage } from './pages/public/TermsOfUsePage';
 import { LoginPage } from './pages/LoginPage';
 import { AdminCoursesEnterprisePage } from './pages/admin/AdminCoursesEnterprisePage';
 import { AdminUsersEnterprisePage } from './pages/admin/AdminUsersEnterprisePage';
@@ -50,6 +52,8 @@ const AppRoutes = () => (
   <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/politica-de-privacidade" element={<PrivacyPolicyPage />} />
+        <Route path="/termos-de-uso" element={<TermsOfUsePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin/cursos" element={<AdminRoute><AdminCoursesEnterprisePage /></AdminRoute>} />
         <Route path="/admin/usuarios" element={<AdminRoute><AdminUsersEnterprisePage /></AdminRoute>} />
